@@ -1,58 +1,117 @@
-import com.unpri.charactermanager.model.Character;
-import com.unpri.charactermanager.model.CharacterManager;
-import com.unpri.charactermanager.model.CharacterType;
-
-import java.util.ArrayList;
+import java.awt.Component;
+import java.awt.Font;
+import java.util.Locale;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("=== Character Manager v0.2 ===");
-        CharacterManager manager = new CharacterManager();
 
-        System.out.println("\n--- Tambah karakter ---");
-        manager.addCharacter(new Character("Arjuna", CharacterType.WARRIOR, 5));
-        manager.addCharacter(new Character("Merlin", CharacterType.MAGE, 3));
-        manager.addCharacter(new Character("Athena", CharacterType.ARCHER, 4));
-        System.out.println("Total karakter: " + manager.getTotalCharacters());
+    static class CharacterData {
+        String name;
+        String type;
+        int level;
+        int hp;
+        int atk;
 
-        System.out.println("\n--- Tolak duplikat ---");
-        manager.addCharacter(new Character("Arjuna", CharacterType.MAGE, 1));
-        System.out.println("Total karakter: " + manager.getTotalCharacters());
-        System.out.println("Total objek Character dibuat: " + Character.getTotalCharacterCreated());
+        CharacterData(String name, String type, int level) {
+            this.name = name;
+            this.type = type;
+            this.level = level;
 
-        System.out.println("\n--- Cari dan hapus ---");
-        System.out.println("Cari Merlin: " + manager.findByName("Merlin"));
-        System.out.println("Cari Zeus: " + manager.findByName("Zeus"));
-        manager.removeCharacter("Athena");
-        manager.removeCharacter("Zeus");
-        System.out.println("Total karakter: " + manager.getTotalCharacters());
-
-        System.out.println("\n--- Mini-Challenge ---");
-        System.out.println("Rata-rata level (manager kosong): " + new CharacterManager().getAverageLevel());
-        System.out.println("Rata-rata level: " + manager.getAverageLevel());
-        ArrayList<Character> mages = manager.findByType(CharacterType.MAGE);
-        System.out.println("Jumlah MAGE: " + mages.size());
-        for (Character c : mages) {
-            System.out.println(" - " + c.getName());
+            // Menghitung HP dan ATK
+            this.hp = 100 + (level * 10);
+            this.atk = 10 + (level * 5);
         }
-        System.out.println("Jumlah HEALER: " + manager.findByType(CharacterType.HEALER).size());
+    }
 
-        System.out.println("\n--- Fitur Analitik (getTypeSummary) ---");
-        System.out.println("Ringkasan tipe: " + manager.getTypeSummary());
-        System.out.println("Ringkasan tipe (manager kosong): " + new CharacterManager().getTypeSummary());
+    public static void main(String[] args) {
 
-        // ===== EKSPERIMEN: Object Reference =====
-        System.out.println("\n--- Eksperimen Reference ---");
-        Character asli = manager.findByName("Arjuna");
-        Character duplikatReferensi = asli;
-        System.out.println("Level Arjuna sebelum: " + asli.getLevel());
-        duplikatReferensi.setLevel(99);
-        System.out.println("Level Arjuna sesudah (lewat 'asli'): " + asli.getLevel());
-        System.out.println("asli == duplikatReferensi? " + (asli == duplikatReferensi));
+        SwingUtilities.invokeLater(() -> {
 
-        ArrayList<Character> salinanList = manager.getAllCharacters();
-        salinanList.add(new Character("Hantu", CharacterType.MAGE, 1));
-        System.out.println("Total di manager asli: " + manager.getTotalCharacters());
-        System.out.println("Total di salinan list : " + salinanList.size());
+            // Membuat daftar karakter
+            CharacterData[] characters = {
+                new CharacterData("Arjuna", "WARRIOR", 5),
+                new CharacterData("Merlin", "MAGE", 3),
+                new CharacterData("Athena", "ARCHER", 4),
+                new CharacterData("Elara", "HEALER", 2),
+                new CharacterData("Gandalf", "MAGE", 10)
+            };
+
+            // Membuat jendela
+            JFrame frame = new JFrame("Character Manager v0.3");
+            frame.setSize(750, 700);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            // Panel utama
+            JPanel panel = new JPanel();
+            panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+
+            // Memberikan jarak dari tepi jendela
+            panel.setBorder(
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+            );
+
+            // Judul daftar karakter
+            JLabel title = new JLabel("=== Daftar Karakter ===");
+            title.setFont(new Font("Arial", Font.BOLD, 18));
+            title.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.add(title);
+
+            // Menghitung total level
+            int totalLevel = 0;
+
+            // Menampilkan seluruh karakter
+            for (CharacterData character : characters) {
+
+                String info = character.name
+                    + " (" + character.type + ")"
+                    + " - Level " + character.level
+                    + " | HP: " + character.hp
+                    + " | ATK: " + character.atk;
+
+                JLabel label = new JLabel(info);
+                label.setFont(new Font("Arial", Font.PLAIN, 18));
+                label.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                panel.add(Box.createVerticalStrut(12));
+                panel.add(label);
+
+                totalLevel += character.level;
+            }
+
+            // Menghitung rata-rata level
+            double average = (double) totalLevel / characters.length;
+
+            panel.add(Box.createVerticalStrut(35));
+
+            JLabel averageLabel = new JLabel(
+                "Rata-rata Level: " +
+                String.format(
+                    Locale.forLanguageTag("id-ID"),
+                    "%.2f",
+                    average
+                )
+            );
+
+            averageLabel.setFont(
+                new Font("Arial", Font.PLAIN, 18)
+            );
+
+            averageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.add(averageLabel);
+
+            // Memasukkan panel ke jendela
+            frame.add(panel);
+
+            // Menampilkan jendela di tengah layar
+            frame.setLocationRelativeTo(null);
+
+            // Menampilkan aplikasi
+            frame.setVisible(true);
+        });
     }
 }
