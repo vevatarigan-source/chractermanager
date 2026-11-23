@@ -1,24 +1,38 @@
-# TP8 — Character Manager Sprint #3
-Pada sprint ini aplikasi berpindah dari console ke GUI. Ditambahkan class MainWindow (package view, extends JFrame) yang menampilkan daftar karakter secara dinamis lewat loop, ditambah statistik "Rata-rata Level" di bawah daftar. Main.java menjalankan jendela lewat SwingUtilities.invokeLater().
+# TP10 — Character Manager Sprint #4
+Pada sprint ini MainWindow naik dari v0.3 ke v0.4. Ditambahkan class AppTheme (package view) yang menjadi pusat warna, font, dan border, sehingga daftar karakter tampil sebagai kartu berwarna menurut role. Package model tidak berubah sama sekali.
 
-## Screenshot MainWindow
-Sebelum data diubah (Gandalf level 7, rata-rata level 4.20):
+## Screenshot sebelum (v0.3) dan sesudah (v0.4)
+Sebelum (v0.3):
 
-![alt text](<TP8 Sebelum.png>)
+![alt text](<TP10 Sebelum.png>)
 
-Sesudah data diubah (Gandalf level 10, rata-rata level 4.80):
+Sesudah (v0.4):
 
-![alt text](<TP8 Sesudah.png>)
+![alt text](<TP10 Sesudah.png>)
+## Mengapa warna disimpan di AppTheme, bukan di Character
+Warna adalah urusan tampilan, bukan data karakter, sehingga pemetaannya saya letakkan di AppTheme.colorFor(CharacterType) pada package view. Jika Character menyimpan java.awt.Color, class Model akan bergantung pada library GUI sehingga tidak bisa dipakai di aplikasi konsol atau unit test tanpa GUI, dan sulit dimigrasi ke JavaFX yang punya class Color sendiri. Dengan rancangan ini arah ketergantungan hanya satu arah (View mengenal Model lewat enum, Model tidak mengenal View), dan mengganti tema cukup dengan mengedit AppTheme.java. Bukti Model tidak berubah ada di bagian "Bukti git diff" di bawah.
 
-Kedua screenshot memuat 5 karakter dan membuktikan bahwa statistik ikut berubah saat data diubah.
+## Mini-Challenge: highlight level tinggi
+Karakter dengan level ≥ 5 tampil dengan teks emas dan tebal. Batasnya disimpan sebagai konstanta bernama HIGH_LEVEL_THRESHOLD = 5 di AppTheme, bukan angka tertulis di dalam if. Saya menaruhnya di View karena "level tinggi" di sini hanya aturan tampilan (kapan sebuah kartu disorot), bukan aturan permainan, dan Model memang tidak boleh diubah.
 
-## Aliran data: Main → CharacterManager → MainWindow
-Main.java membuat CharacterManager dan mengisinya dengan lima karakter (Model). Data diambil lewat manager.getAllCharacters(), yang mengembalikan salinan list, lalu diteruskan ke constructor MainWindow. MainWindow (View) hanya menerima list itu, membuat satu JLabel untuk setiap karakter lewat loop, dan menampilkan rata-rata level, tanpa mengetahui cara data disimpan. Dalam MVC, Main untuk sementara berperan sebagai penghubung (pengganti Controller yang dibangun pada pertemuan berikutnya): Model tidak mengenal View, dan View tidak mengubah data Model.
+## Dua properti tambahan
 
-## Karakter baru
-Karakter	Tipe	Level	Alasan pemilihan
-Elara	HEALER	2	Melengkapi empat tipe karakter (sebelumnya belum ada HEALER) dan level rendah agar datanya bervariasi
-Gandalf	MAGE	7, lalu diubah menjadi 10	Level tinggi sehingga pengaruhnya pada rata-rata level terlihat jelas saat data diubah
+### Properti Komponen Tambahan
+
+| Properti | Penerapan | Alasan |
+| :--- | :--- | :--- |
+| **Tooltip berisi detail HP/ATK** | `setToolTipText(describe(role) + " \| HP .., ATK ..")` | Detail statistik tersedia saat kursor diam di kartu tanpa membuat teks kartu terlalu panjang |
+| **`setEnabled(false)` untuk karakter level 1** | Kartu Morgana tampil redup | Menandai karakter yang belum siap tanpa menyembunyikannya, sehingga pengguna tetap tahu karakternya ada |
+
+Batas level 1 juga disimpan sebagai konstanta bernama (DISABLED_LEVEL).
+
+## Bukti git diff: package model tidak berubah
+```text
+git diff HEAD~1 HEAD --stat -- src/com/unpri/charactermanager/model
+```
+
+Output perintah di atas kosong, artinya tidak ada perubahan di Character.java, CharacterType.java, maupun CharacterManager.java.
+
 ## Struktur folder
 ```text
 CharacterManager/
@@ -31,17 +45,21 @@ CharacterManager/
 │   │           │   ├── CharacterManager.java
 │   │           │   └── CharacterType.java
 │   │           └── view/
+│   │               ├── AppTheme.java
 │   │               └── MainWindow.java
 │   └── Main.java
 ├── output-tp5.png
 ├── output.png
 ├── README.MD
 ├── tp8-sebelum.png
-└── tp8-sesudah.png
+├── tp8-sesudah.png
+├── tp10-sebelum-v03.png
+└── tp10-sesudah-v04.png
 ```
-## Analisis Bagian D TP8 (Google Docs)
-Nama : veva Br Tarigan
 
-Nim : 253303621280
+## Analisis Bagian D TP10 (Google Docs)
+Nama : Veva Br Tarigan  
 
-https://drive.google.com/file/d/1IDZM2fkGy6Y2aSbMkZPPvbbH4N70PTQE/view?usp=drivesdk
+Nim : 253303621260  
+
+https://drive.google.com/file/d/131aAg4BB_KGFURBv_Vdb29IWTWuy1Dmu/view?usp=drive_link
