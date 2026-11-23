@@ -15,6 +15,7 @@ memperlihatkan nama duplikat ditolak, getAverageLevel() pada list kosong menghas
 getTypeSummary() merangkum jumlah karakter untuk setiap tipe (WARRIOR, MAGE, ARCHER, HEALER) dalam satu String, misalnya untuk ditampilkan di GUI pada sprint berikutnya. Method ini mengembalikan String, bukan characterList atau salinannya, karena String tidak dapat diubah dari luar. Pemanggil hanya menerima hasil hitungan dan tidak pernah memegang reference ke list internal, sehingga Encapsulation terjaga dan perubahan data hanya bisa lewat addCharacter() dan removeCharacter(). Method memakai CharacterType.values(), sehingga jika kelak ditambah tipe baru seperti NECROMANCER, method ini otomatis ikut menghitungnya tanpa perlu diubah.
 
 ## 📁 Struktur Folder Proyek (Sprint 2 - AP5 / TP5)
+```text
 CharacterManager/
 │
 ├── src/
@@ -31,5 +32,6 @@ CharacterManager/
 ├── output-tp5.png
 ├── output.png
 └── README.md
+```
 ## Analisis Bagian D TP5 (Google Docs)
 https://drive.google.com/file/d/1bg5ZWmzMlZcuY5KX--9fdRuR5Nn3X4Yj/view?usp=drivesdk
